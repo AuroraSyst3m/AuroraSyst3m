@@ -3,151 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌Aurora🌌 | Executive Terminal</title>
+    <title>Aurora | Secure Terminal v3.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --mint: #4ecca3; --blurple: #7289da; --bg: #050505; --red: #ff4d4d; --glass: rgba(255,255,255,0.03); }
-        body { margin: 0; padding: 0; color: #fff; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
+        :root {
+            --bg-dark: #020604;
+            --mint: #4ecca3;
+            --mint-glow: rgba(78, 204, 163, 0.4);
+            --blurple: #5865F2;
+            --red: #ff4d4d;
+            --card-bg: #080c0a;
+            --text-main: #ffffff;
+            --text-dim: #7a9e8f;
+            --border: #1a241f;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- Aurora Background Shader --- */
+        .aurora-viewport {
+            position: fixed; top: 0; left: 0; width: 100%; height: 500px;
+            z-index: -1; background: linear-gradient(to bottom, #020604 0%, transparent 100%);
+            overflow: hidden; opacity: 0.7;
+        }
+        .aurora-curtain {
+            position: absolute; width: 200%; height: 100%;
+            background: repeating-linear-gradient(90deg, transparent, rgba(78, 204, 163, 0.1) 10%, rgba(88, 101, 242, 0.05) 20%, transparent 30%);
+            filter: blur(60px); transform: skewX(-25deg);
+            animation: move-aurora 15s infinite linear;
+        }
+        @keyframes move-aurora { from { transform: translateX(-50%) skewX(-25deg); } to { transform: translateX(0%) skewX(-25deg); } }
+
+        /* --- Navigation Bar --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; background: rgba(0,0,0,0.85);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(15px);
+        }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a {
+            color: var(--text-dim); text-decoration: none; font-size: 11px;
+            letter-spacing: 2px; font-weight: 800; transition: 0.3s; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--mint); }
+
+        /* --- Modernized Price Cards (Exact Image Match) --- */
+        .price-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px; padding: 40px 8%;
+        }
+        .price-card {
+            background: var(--card-bg); border-radius: 24px; padding: 40px;
+            border: 1px solid var(--border); transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; overflow: hidden;
+        }
+
+        /* THE HOVER EFFECT FROM THE IMAGE */
+        .price-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at center, var(--mint-glow) 0%, transparent 70%);
+            opacity: 0; transition: 0.5s; z-index: 1;
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--mint);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--mint-glow);
+        }
+        .price-card:hover::after { opacity: 0.15; }
+
+        .card-node { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
+        .card-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; position: relative; z-index: 2; }
+        .price-hero { font-size: 42px; font-weight: 800; margin: 25px 0; font-family: 'JetBrains Mono'; color: #fff; position: relative; z-index: 2; }
+        .price-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; color: var(--text-dim); position: relative; z-index: 2; }
         
-        .aurora-bg { position: fixed; inset: 0; background: radial-gradient(circle at 20% 30%, rgba(78, 204, 163, 0.08), transparent), radial-gradient(circle at 80% 70%, rgba(114, 137, 218, 0.08), transparent); filter: blur(60px); z-index: -1; }
+        .btn-buy {
+            width: 100%; padding: 18px; background: #111;
+            border: 1px solid #222; color: #fff; border-radius: 14px;
+            font-weight: 800; cursor: pointer; margin-top: 30px; transition: 0.3s;
+            position: relative; z-index: 2; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-buy:hover { background: var(--mint); color: #000; border-color: var(--mint); box-shadow: 0 0 15px var(--mint); }
 
-        /* Login Screen */
-        .auth-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .auth-box { background: rgba(10, 10, 10, 0.9); padding: 50px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; width: 400px; backdrop-filter: blur(40px); box-shadow: 0 0 50px rgba(0,0,0,1); }
-        .terminal-header { font-size: 10px; color: var(--mint); letter-spacing: 5px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.8; }
-        .auth-box h1 { letter-spacing: 15px; margin-bottom: 30px; font-weight: 200; text-shadow: 0 0 15px var(--mint); }
-        .input-group input { width: 100%; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid #333; color: white; border-radius: 8px; text-align: center; margin-bottom: 20px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--mint); }
+        /* --- Admin Dashboard --- */
+        #tab-admin { padding: 40px 8%; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .admin-table { 
+            width: 100%; border-collapse: collapse; background: #0a0a0a; 
+            border-radius: 15px; overflow: hidden; border: 1px solid var(--border);
+        }
+        .admin-table th { background: #111; padding: 20px; text-align: left; color: var(--red); font-size: 12px; letter-spacing: 1px; }
+        .admin-table td { padding: 20px; border-bottom: 1px solid #151515; font-family: 'JetBrains Mono'; font-size: 13px; }
 
-        /* Navigation */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(0,0,0,0.9); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top:0; z-index:100; }
-        .nav-links a { color: #888; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 12px; letter-spacing: 2px; margin-left: 25px; transition: 0.3s; text-transform: uppercase; }
-        .nav-links a.active, .nav-links a:hover { color: var(--mint); text-shadow: 0 0 10px var(--mint); }
+        /* --- Modals & 2FA --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+        .confirm-card {
+            background: #0d0d0d; padding: 45px; border-radius: 28px;
+            border: 1px solid var(--border); width: 400px; text-align: center;
+        }
+        .discord-2fa-box {
+            background: #000; border-radius: 12px; padding: 20px;
+            text-align: left; border-left: 4px solid var(--blurple); margin: 20px 0;
+        }
 
-        /* Admin Command Center */
-        #owner-panel { background: rgba(78, 204, 163, 0.03); border: 1px solid var(--mint); padding: 30px; border-radius: 15px; margin-bottom: 40px; display: none; }
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .admin-section { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .log-table { width: 100%; font-size: 11px; text-align: left; border-collapse: collapse; font-family: monospace; }
-        .log-table td { padding: 10px 5px; border-bottom: 1px solid #111; color: #ccc; }
-
-        /* The Famous Blurple/Mint Animated Cards */
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
-        .price-card { position: relative; background: #0a0a0a; padding: 2px; border-radius: 22px; overflow: hidden; display: flex; transition: 0.4s; min-height: 320px; }
-        .price-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(78, 204, 163, 0.1); }
-        .price-card::before { content: ''; position: absolute; width: 200%; height: 200%; background-image: conic-gradient(transparent, transparent, var(--mint), transparent, transparent, transparent, var(--blurple), transparent); animation: rotate 4s linear infinite; top: -50%; left: -50%; }
-        .card-inner { background: #0a0a0a; padding: 25px; border-radius: 20px; width: 100%; position: relative; z-index: 5; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        /* Buttons & Content */
-        .btn-action { background: var(--mint); color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        .btn-action:hover { filter: brightness(1.2); transform: scale(1.02); }
-        .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        
-        #announcement-banner { background: var(--mint); color: #000; padding: 12px; text-align: center; font-weight: 900; display: none; letter-spacing: 2px; }
-        .container { padding: 40px 10%; }
-        .hidden { display: none; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        .active-tab { display: block !important; }
     </style>
 </head>
 <body>
 
-    <div class="aurora-bg"></div>
-    <div id="announcement-banner"></div>
+    <div class="aurora-viewport"><div class="aurora-curtain"></div></div>
 
-    <div id="auth-screen" class="auth-overlay">
-        <div class="auth-box" id="login-form">
-            <div class="terminal-header">SECURE ACCESS v5.1</div>
-            <h1>AURORA</h1>
-            <div class="input-group">
-                <input type="text" id="discord-user" placeholder="DISCORD_USERNAME">
+    <div id="logout-modal" class="modal-overlay hidden">
+        <div class="confirm-card">
+            <h2 style="letter-spacing: 2px;">CONFIRM LOGOUT</h2>
+            <p style="color: var(--text-dim); margin: 20px 0;">Your active session and HWID whitelist will remain, but you must re-verify your identity.</p>
+            <div style="display:flex; gap:15px;">
+                <button class="btn-buy" style="margin:0;" onclick="location.reload()">LOGOUT</button>
+                <button class="btn-buy" style="margin:0; background:transparent; border-color:var(--mint); color:var(--mint);" onclick="closeLogout()">CANCEL</button>
             </div>
-            <button class="btn-action" onclick="beginAuth()">INITIALIZE TERMINAL</button>
-        </div>
-        <div class="auth-box hidden" id="waiting-form">
-            <div class="terminal-header" style="color:var(--mint)">AUTHORIZING...</div>
-            <h2 style="letter-spacing: 3px;">VERIFYING</h2>
-            <p style="color: #666; font-size: 13px;">Please check Discord DMs for the security handshake.</p>
         </div>
     </div>
 
-    <div id="main-site" class="hidden">
+    <div id="auth-screen" class="modal-overlay">
+        <div class="confirm-card" id="login-form">
+            <h1 style="letter-spacing:15px; font-weight:200;">AURORA</h1>
+            <p style="color:var(--mint); font-size:10px; letter-spacing:5px; margin-bottom:30px;">SYSTEM ENTRY REQUIRED</p>
+            <input type="text" id="discord-id" placeholder="DISCORD_ID" style="width:100%; padding:18px; background:#000; border:1px solid #222; color:white; border-radius:12px; text-align:center; font-family:'JetBrains Mono'; margin-bottom:15px;">
+            <button class="btn-buy" style="background:var(--mint); color:#000;" onclick="handleLogin()">INITIALIZE</button>
+        </div>
+
+        <div class="confirm-card hidden" id="waiting-area">
+            <div class="discord-2fa-box">
+                <p style="color:var(--blurple); margin:0; font-size:12px;">[AURORA_BOT]</p>
+                <p style="font-size:12px; margin:10px 0; font-family:'JetBrains Mono';">
+                    Authorization Complete. System entry logged.<br><br>
+                    <span style="color:var(--mint)">Aurora Security Analysis</span><br>
+                    Threat Level: LOW (10/100)<br>
+                    Action Required: <span style="color:white">Wait for ✅</span>
+                </p>
+            </div>
+            <p style="font-size:10px; color:var(--text-dim);">Scanning HWID & IP Reputation...</p>
+        </div>
+    </div>
+
+    <div id="main-terminal" class="hidden">
         <nav>
-            <h2 style="color: var(--mint); letter-spacing: 5px; margin:0;">AURORA</h2>
+            <div style="font-weight:800; letter-spacing:5px; color:var(--mint);">AURORA</div>
             <div class="nav-links">
-                <a onclick="showTab('home')" id="nav-home" class="active">HOME</a>
-                <a onclick="showTab('payments')" id="nav-payments">PAYMENTS</a>
-                <a onclick="showTab('contact')" id="nav-contact">CONTACT</a>
-                <a onclick="location.reload()" style="color:var(--red)">[LOGOUT]</a>
+                <a onclick="switchTab('home')" id="btn-home" class="active">HOME</a>
+                <a onclick="switchTab('payment')" id="btn-payment">PAYMENT</a>
+                <a onclick="switchTab('admin')" id="btn-admin" class="hidden">ADMIN</a>
+                <a onclick="openLogout()" style="color:var(--red)">LOGOUT</a>
             </div>
         </nav>
 
-        <div class="container">
-            <div id="owner-panel">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h2 style="margin:0; letter-spacing:2px; color: var(--mint);">ADMINISTRATOR OVERRIDE</h2>
-                    <div>
-                        <button class="btn-action" style="width:auto; padding:8px 15px; font-size:11px;" onclick="setMOTD()">SET ANNOUNCEMENT</button>
-                        <button class="btn-action" style="width:auto; padding:8px 15px; font-size:11px; margin-left:10px;" onclick="openServiceModal()">ADD SERVICE</button>
-                    </div>
-                </div>
-                
-                <div class="admin-grid">
-                    <div class="admin-section">
-                        <h4 style="color:var(--mint); font-size:11px;">ACCESS LOGS</h4>
-                        <table class="log-table"><tbody id="access-body"></tbody></table>
-                    </div>
-                    <div class="admin-section">
-                        <h4 style="color:var(--mint); font-size:11px;">PURCHASE HISTORY</h4>
-                        <table class="log-table"><tbody id="ledger-body"></tbody></table>
-                    </div>
-                </div>
+        <section id="tab-home" class="active-tab" style="padding: 60px 8%;">
+            <div style="background:rgba(255,255,255,0.02); padding:50px; border-radius:30px; border:1px solid var(--border);">
+                <h1>Terminal Active: <span id="display-name" style="color:var(--mint);">...</span></h1>
+                <p style="color:var(--text-dim); line-height:1.8; margin-top:20px; max-width:700px;">
+                    Your hardware signature (HWID) has been successfully verified against the Grand Archive. 
+                    Encryption protocols are now active. Use the Navigation bar above to access your licensed 
+                    calculation nodes or manage your account.
+                </p>
             </div>
+        </section>
 
-            <section id="tab-home">
-                <h1>Welcome, <span id="user-display" style="color:var(--mint)">...</span></h1>
-                <div style="background:var(--glass); padding:35px; border-radius:15px; border-left:5px solid var(--mint);">
-                    <h3 style="margin-top:0;">System Integrity: Validated</h3>
-                    <p style="color:#aaa;">You have successfully bypassed the encryption layer. Navigate to the <b>Payments</b> tab to view available service licenses.</p>
-                </div>
-            </section>
+        <section id="tab-payment" class="hidden">
+            <div style="padding: 40px 8% 0 8%;">
+                <h2 style="letter-spacing:2px;">Available <span style="color:var(--mint)">Nodes</span></h2>
+            </div>
+            <div class="price-grid" id="node-container"></div>
+        </section>
 
-            <section id="tab-payments" class="hidden">
-                <h1>Service <span style="color: var(--mint);">Licenses</span></h1>
-                <div class="price-grid" id="service-grid"></div>
-            </section>
-
-            <section id="tab-contact" class="hidden">
-                <h1>Secure <span style="color: var(--mint);">Contact</span></h1>
-                <div style="background:var(--glass); padding:35px; border-radius:15px;">
-                    <p><b>Official Discord:</b> .gg/aurora</p>
-                    <p style="color:#666;">Response time: < 24 Hours</p>
-                </div>
-            </section>
-        </div>
+        <section id="tab-admin" class="hidden">
+            <div class="admin-header">
+                <h2>SECURITY COMMAND <span style="color:var(--red)">CENTER</span></h2>
+                <div style="font-size:11px; color:var(--text-dim); background:#111; padding:8px 15px; border-radius:5px; border:1px solid var(--red);">SESSIONS: LIVE</div>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>USER</th>
+                        <th>HARDWARE ID (HWID)</th>
+                        <th>IP ADDR</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-tbody">
+                    </tbody>
+            </table>
+        </section>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        const OWNER_NAME = "frog360"; // RESTORED OWNER NAME
-
-        const initialServices = [
-            { name: "IXL (MATH)", color: "var(--mint)", prices: { Weekly: "$2.00", Monthly: "$3.50", Yearly: "$35.00" } },
-            { name: "EP (MATH)", color: "var(--blurple)", prices: { Weekly: "$1.50", Monthly: "$4.50", Yearly: "$44.00" } },
-            { name: "KAHOOT (MATH)", color: "var(--mint)", prices: { Weekly: "$3.50", Monthly: "$6.50", Yearly: "$65.00" } },
-            { name: "BLOOKET (MATH)", color: "var(--blurple)", prices: { Weekly: "$2.00", Monthly: "$5.00", Yearly: "$50.00" } },
-            { name: "ANYTHING AI", color: "var(--mint)", prices: { Weekly: "$2.00", Monthly: "$5.00", Yearly: "$50.00" } },
-            { name: "AQUA AURORA", color: "var(--blurple)", prices: { Weekly: "$1.00", Monthly: "$3.00", Yearly: "$30.00" } },
-            { name: "DONATION", color: "var(--mint)", prices: { Weekly: "$1.50", Monthly: "$4.00", Yearly: "$40.00" } },
-            { name: "CUSTOM REQUEST", color: "var(--blurple)", prices: { Weekly: "$2.50", Monthly: "$6.00", Yearly: "$60.00" } },
-            { name: "IXL (ENGLISH)", color: "var(--mint)", prices: { Weekly: "$1.80", Monthly: "$2.90", Yearly: "$30.00" } },
-            { name: "EP (ENGLISH)", color: "var(--blurple)", prices: { Weekly: "$1.00", Monthly: "$4.00", Yearly: "$44.00" } },
-            { name: "KAHOOT (ENGLISH)", color: "var(--mint)", prices: { Weekly: "$4.00", Monthly: "$8.00", Yearly: "$80.00" } },
-            { name: "BLOOKET (ENGLISH)", color: "var(--blurple)", prices: { Weekly: "$3.00", Monthly: "$5.10", Yearly: "$59.99" } },
-            { name: "VIDEO PLAYER", color: "var(--mint)", prices: { Weekly: "$?.??", Monthly: "$?.??", Yearly: "$?.??" } },
-            { name: "PRIVATE ACCESS", color: "var(--blurple)", prices: { Weekly: "$?.??", Monthly: "$?.??", Yearly: "$?.??" } }
+        const OWNER = "frog360";
+        const nodes = [
+            { id: "Node_01", name: "IXL (MATH)", weekly: "$2.00", monthly: "$3.50", yearly: "S$ 35.00" },
+            { id: "Node_02", name: "EP (MATH)", weekly: "$1.50", monthly: "$4.50", yearly: "S$ 44.00" },
+            { id: "Node_03", name: "KAHOOT (MATH)", weekly: "$3.50", monthly: "$6.50", yearly: "S$ 65.00" },
+            { id: "Node_04", name: "BLOOKET (MATH)", weekly: "$2.00", monthly: "$5.00", yearly: "S$ 50.00" },
+            { id: "Node_05", name: "ANYTHING AI", weekly: "$5.00", monthly: "$15.00", yearly: "S$ 120.00" },
+            { id: "Node_06", name: "AURORA PRIME", weekly: "$10.00", monthly: "$25.00", yearly: "S$ 200.00" }
         ];
 
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyCmnO3VTJ3KYg5x5dWOMLexT1_a9VPpP1Q",
             authDomain: "foldrex-aurora.firebaseapp.com",
@@ -159,110 +234,105 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let loggedUser = "";
+        const getHWID = () => btoa(navigator.userAgent + navigator.language).slice(0, 16).toLowerCase();
 
-        async function beginAuth() {
-            loggedUser = document.getElementById('discord-user').value.trim().toLowerCase();
-            if(!loggedUser) return;
-            const ip = await fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => d.ip).catch(() => "Unknown");
-            
-            const blackDoc = await db.collection("blacklist").doc(ip).get();
-            if(blackDoc.exists) { alert("TERMINAL ACCESS DENIED"); return; }
+        async function handleLogin() {
+            const user = document.getElementById('discord-id').value.trim().toLowerCase();
+            const hwid = getHWID();
 
-            // frog360 Bypass
-            if(loggedUser === OWNER_NAME.toLowerCase()) { unlockTerminal(); return; }
+            // Check Banned Status First
+            const banRef = await db.collection("blacklist").doc(hwid).get();
+            if(banRef.exists) {
+                alert("ACCESS DENIED: Your Hardware ID is blacklisted from this terminal.");
+                return;
+            }
+
+            // HWID Bypass Logic
+            if(user === OWNER || localStorage.getItem('aurora_token') === hwid) {
+                launch(user);
+                return;
+            }
 
             document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('waiting-form').classList.remove('hidden');
+            document.getElementById('waiting-area').classList.remove('hidden');
 
-            const reqRef = db.collection("auth_requests").doc(loggedUser);
-            await reqRef.set({ username: loggedUser, status: "pending", ip_address: ip, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            reqRef.onSnapshot(doc => { if(doc.exists && doc.data().status === "approved") unlockTerminal(); });
-        }
+            const reqRef = db.collection("auth_requests").doc(user);
+            await reqRef.set({
+                username: user,
+                hwid: hwid,
+                status: "pending",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        function unlockTerminal() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-site').classList.remove('hidden');
-            document.getElementById('user-display').innerText = loggedUser;
-            
-            db.collection("settings").doc("announcement").onSnapshot(doc => {
-                if(doc.exists && doc.data().text) {
-                    const b = document.getElementById('announcement-banner');
-                    b.innerText = doc.data().text; b.style.display = 'block';
+            reqRef.onSnapshot(doc => {
+                if(doc.exists && doc.data().status === "approved") {
+                    localStorage.setItem('aurora_token', hwid);
+                    launch(user);
                 }
             });
+        }
 
-            if(loggedUser === OWNER_NAME.toLowerCase()) {
-                document.getElementById('owner-panel').style.display = 'block';
-                initAdminHub();
+        function launch(user) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-terminal').classList.remove('hidden');
+            document.getElementById('display-name').innerText = user;
+
+            if(user === OWNER) {
+                document.getElementById('btn-admin').classList.remove('hidden');
+                loadAdminData();
             }
-            renderServices();
+            renderNodes();
         }
 
-        function initAdminHub() {
-            db.collection("auth_requests").orderBy("timestamp", "desc").limit(8).onSnapshot(snap => {
-                const b = document.getElementById('access-body'); b.innerHTML = "";
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    b.innerHTML += `<tr><td>${d.username}</td><td>${d.ip_address}</td><td>
-                        <span style="color:var(--mint); cursor:pointer;" onclick="updateAccess('${doc.id}','approved')">[✔]</span>
-                        <span style="color:var(--red); cursor:pointer; margin-left:10px;" onclick="banUser('${d.ip_address}')">[BAN]</span>
-                    </td></tr>`;
-                });
-            });
-
-            db.collection("purchases").orderBy("timestamp", "desc").limit(8).onSnapshot(snap => {
-                const b = document.getElementById('ledger-body'); b.innerHTML = "";
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    b.innerHTML += `<tr><td>${d.user}</td><td>${d.service}</td><td>${d.timestamp ? d.timestamp.toDate().toLocaleTimeString() : '...'}</td></tr>`;
-                });
-            });
+        function renderNodes() {
+            const container = document.getElementById('node-container');
+            container.innerHTML = nodes.map(n => `
+                <div class="price-card">
+                    <div class="card-node">${n.id}</div>
+                    <div class="card-title">${n.name}</div>
+                    <div class="price-row"><span>Weekly</span><span>${n.weekly}</span></div>
+                    <div class="price-row"><span>Monthly</span><span>${n.monthly}</span></div>
+                    <div class="price-hero">${n.yearly} <span style="font-size:12px; color:var(--text-dim)">Yearly</span></div>
+                    <button class="btn-buy" onclick="alert('Payment terminal opening...')">BUY NOW</button>
+                </div>
+            `).join('');
         }
 
-        async function updateAccess(id, s) { await db.collection("auth_requests").doc(id).update({ status: s }); }
-        async function banUser(ip) { if(confirm("Permanent Ban?")) await db.collection("blacklist").doc(ip).set({ bannedAt: firebase.firestore.FieldValue.serverTimestamp() }); }
-        async function setMOTD() { const m = prompt("Announcement:"); await db.collection("settings").doc("announcement").set({ text: m }); }
-
-        function renderServices() {
-            const grid = document.getElementById('service-grid'); grid.innerHTML = "";
-            initialServices.forEach(s => grid.appendChild(createCard(s)));
-            db.collection("services").onSnapshot(snap => {
-                document.querySelectorAll('.dyn-card').forEach(e => e.remove());
+        function loadAdminData() {
+            db.collection("auth_requests").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const tbody = document.getElementById('admin-tbody');
+                tbody.innerHTML = "";
                 snap.forEach(doc => {
                     const d = doc.data();
-                    const c = createCard({ name: d.name, color: "var(--mint)", isDyn: true, id: doc.id, desc: d.desc, link: d.link });
-                    c.classList.add('dyn-card'); grid.appendChild(c);
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${d.username}</td>
+                            <td>${d.hwid}</td>
+                            <td style="color:var(--mint)">ENCRYPTED_IP</td>
+                            <td>
+                                <button class="btn-buy" style="margin:0; padding:5px 10px; font-size:10px;" onclick="approve('${doc.id}')">APPROVE</button>
+                                <button class="btn-buy" style="margin:0; padding:5px 10px; font-size:10px; border-color:var(--red); color:var(--red);" onclick="ban('${d.hwid}')">BAN HWID</button>
+                            </td>
+                        </tr>
+                    `;
                 });
             });
         }
 
-        function createCard(s) {
-            const div = document.createElement('div'); div.className = "price-card";
-            let p = "";
-            if(s.prices) { for (const [k, v] of Object.entries(s.prices)) p += `<div class="price-row"><span>${k}</span><span>${v}</span></div>`; }
-            else p = `<p style="font-size:12px; color:#777;">${s.desc}</p>`;
-            div.innerHTML = `<div class="card-inner"><div><h3 style="color:${s.color}">${s.name}</h3>${p}</div><button class="btn-action" style="background:${s.color}; margin-top:15px;" onclick="handlePurchase('${s.link || s.name}')">PURCHASE</button>
-                ${s.isDyn && loggedUser === OWNER_NAME.toLowerCase() ? `<p onclick="delService('${s.id}')" style="color:var(--red); cursor:pointer; font-size:10px; text-align:center; margin-top:10px;">[DELETE]</p>` : ''}</div>`;
-            return div;
+        async function approve(id) { await db.collection("auth_requests").doc(id).update({status: "approved"}); }
+        async function ban(hwid) { if(confirm("Confirm HWID Blacklist?")) await db.collection("blacklist").doc(hwid).set({banned: true}); }
+
+        function switchTab(tabId) {
+            ['home', 'payment', 'admin'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).classList.remove('active');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active');
         }
 
-        function showTab(id) {
-            ['home', 'payments', 'contact'].forEach(t => { document.getElementById('tab-'+t).classList.add('hidden'); document.getElementById('nav-'+t).classList.remove('active'); });
-            document.getElementById('tab-'+id).classList.remove('hidden'); document.getElementById('nav-'+id).classList.add('active');
-        }
-
-        async function handlePurchase(n) {
-            if(n.startsWith('http')) { window.open(n, '_blank'); return; }
-            await db.collection("purchases").add({ user: loggedUser, service: n, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            alert("Order Logged.");
-        }
-
-        async function openServiceModal() {
-            const n = prompt("Name:"); const d = prompt("Desc/Price:"); const l = prompt("Link:");
-            if(n && d) await db.collection("services").add({ name: n, desc: d, link: l });
-        }
-        async function delService(id) { if(confirm("Delete?")) await db.collection("services").doc(id).delete(); }
+        function openLogout() { document.getElementById('logout-modal').classList.remove('hidden'); }
+        function closeLogout() { document.getElementById('logout-modal').classList.add('hidden'); }
     </script>
 </body>
 </html>
