@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌Aurora🌌 | Command Center</title>
+    <title>🌌Aurora🌌 | Executive Terminal</title>
     <style>
         :root { --mint: #4ecca3; --blurple: #7289da; --bg: #050505; --red: #ff4d4d; --glass: rgba(255,255,255,0.03); }
         body { margin: 0; padding: 0; color: #fff; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
@@ -12,38 +12,40 @@
 
         /* Login Screen */
         .auth-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .auth-box { background: rgba(10, 10, 10, 0.9); padding: 50px; border-radius: 15px; border: 1px solid rgba(78, 204, 163, 0.2); text-align: center; width: 400px; backdrop-filter: blur(40px); }
-        .terminal-header { font-size: 10px; color: var(--mint); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
-        .input-group input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; margin-bottom: 20px; font-family: monospace; outline: none; }
+        .auth-box { background: rgba(10, 10, 10, 0.9); padding: 50px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; width: 400px; backdrop-filter: blur(40px); box-shadow: 0 0 50px rgba(0,0,0,1); }
+        .terminal-header { font-size: 10px; color: var(--mint); letter-spacing: 5px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.8; }
+        .auth-box h1 { letter-spacing: 15px; margin-bottom: 30px; font-weight: 200; text-shadow: 0 0 15px var(--mint); }
+        .input-group input { width: 100%; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid #333; color: white; border-radius: 8px; text-align: center; margin-bottom: 20px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--mint); }
 
         /* Navigation */
         nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(0,0,0,0.9); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top:0; z-index:100; }
-        .nav-links a { color: #666; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 11px; letter-spacing: 2px; margin-left: 20px; transition: 0.3s; }
-        .nav-links a.active, .nav-links a:hover { color: var(--mint); }
+        .nav-links a { color: #888; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 12px; letter-spacing: 2px; margin-left: 25px; transition: 0.3s; text-transform: uppercase; }
+        .nav-links a.active, .nav-links a:hover { color: var(--mint); text-shadow: 0 0 10px var(--mint); }
 
-        /* Command Center UI */
-        #owner-panel { background: #0a0a0a; border: 1px solid #222; padding: 30px; border-radius: 12px; margin-bottom: 40px; display: none; }
+        /* Admin Command Center */
+        #owner-panel { background: rgba(78, 204, 163, 0.03); border: 1px solid var(--mint); padding: 30px; border-radius: 15px; margin-bottom: 40px; display: none; }
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .admin-section { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-        .admin-section h4 { margin-top: 0; color: var(--mint); font-size: 11px; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .admin-section { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .log-table { width: 100%; font-size: 11px; text-align: left; border-collapse: collapse; font-family: monospace; }
+        .log-table td { padding: 10px 5px; border-bottom: 1px solid #111; color: #ccc; }
 
-        .log-table { width: 100%; font-size: 10px; text-align: left; border-collapse: collapse; }
-        .log-table td { padding: 8px 5px; border-bottom: 1px solid #111; color: #aaa; }
-
-        /* Buttons */
-        .btn-mini { padding: 4px 8px; font-size: 9px; border-radius: 3px; cursor: pointer; border: none; font-weight: bold; }
-        .btn-approve { background: var(--mint); color: #000; }
-        .btn-ban { background: var(--red); color: #fff; margin-left: 5px; }
-        .btn-action { background: var(--mint); color: #000; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; }
-
-        /* Announcement Banner */
-        #announcement-banner { background: var(--mint); color: #000; padding: 10px; text-align: center; font-weight: 900; font-size: 12px; display: none; letter-spacing: 1px; }
-
+        /* The Famous Blurple/Mint Animated Cards */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
+        .price-card { position: relative; background: #0a0a0a; padding: 2px; border-radius: 22px; overflow: hidden; display: flex; transition: 0.4s; min-height: 320px; }
+        .price-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(78, 204, 163, 0.1); }
+        .price-card::before { content: ''; position: absolute; width: 200%; height: 200%; background-image: conic-gradient(transparent, transparent, var(--mint), transparent, transparent, transparent, var(--blurple), transparent); animation: rotate 4s linear infinite; top: -50%; left: -50%; }
+        .card-inner { background: #0a0a0a; padding: 25px; border-radius: 20px; width: 100%; position: relative; z-index: 5; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        /* Buttons & Content */
+        .btn-action { background: var(--mint); color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        .btn-action:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        
+        #announcement-banner { background: var(--mint); color: #000; padding: 12px; text-align: center; font-weight: 900; display: none; letter-spacing: 2px; }
         .container { padding: 40px 10%; }
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 20px; }
-        .price-card { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 25px; border-radius: 15px; transition: 0.3s; }
-        .price-card:hover { border-color: var(--mint); transform: translateY(-5px); }
         .hidden { display: none; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -53,67 +55,72 @@
 
     <div id="auth-screen" class="auth-overlay">
         <div class="auth-box" id="login-form">
-            <div class="terminal-header">AURORA COMMAND v5.0</div>
+            <div class="terminal-header">SECURE ACCESS v5.1</div>
+            <h1>AURORA</h1>
             <div class="input-group">
-                <input type="text" id="discord-user" placeholder="USER_ID">
+                <input type="text" id="discord-user" placeholder="DISCORD_USERNAME">
             </div>
             <button class="btn-action" onclick="beginAuth()">INITIALIZE TERMINAL</button>
         </div>
         <div class="auth-box hidden" id="waiting-form">
-            <div class="terminal-header" style="color:var(--mint)">ENCRYPTING SESSION...</div>
-            <p style="font-size: 12px; color: #888;">Security protocol engaged. Standby for Authorization.</p>
+            <div class="terminal-header" style="color:var(--mint)">AUTHORIZING...</div>
+            <h2 style="letter-spacing: 3px;">VERIFYING</h2>
+            <p style="color: #666; font-size: 13px;">Please check Discord DMs for the security handshake.</p>
         </div>
     </div>
 
     <div id="main-site" class="hidden">
         <nav>
-            <h2 style="color: var(--mint); margin:0; letter-spacing: 3px;">AURORA</h2>
+            <h2 style="color: var(--mint); letter-spacing: 5px; margin:0;">AURORA</h2>
             <div class="nav-links">
-                <a onclick="showTab('home')" id="nav-home" class="active">CORE</a>
-                <a onclick="showTab('payments')" id="nav-payments">REGISTRY</a>
-                <a onclick="showTab('contact')" id="nav-contact">SECURE</a>
-                <a onclick="location.reload()" style="color:var(--red)">[EXIT]</a>
+                <a onclick="showTab('home')" id="nav-home" class="active">HOME</a>
+                <a onclick="showTab('payments')" id="nav-payments">PAYMENTS</a>
+                <a onclick="showTab('contact')" id="nav-contact">CONTACT</a>
+                <a onclick="location.reload()" style="color:var(--red)">[LOGOUT]</a>
             </div>
         </nav>
 
         <div class="container">
             <div id="owner-panel">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h2 style="margin:0; letter-spacing:3px; color: var(--mint);">COMMAND CENTER</h2>
+                    <h2 style="margin:0; letter-spacing:2px; color: var(--mint);">ADMINISTRATOR OVERRIDE</h2>
                     <div>
-                        <button class="btn-mini btn-approve" style="padding:10px;" onclick="setMOTD()">📢 SET ANNOUNCEMENT</button>
-                        <button class="btn-mini btn-approve" style="padding:10px; margin-left:10px;" onclick="openServiceModal()">+ ADD SERVICE</button>
+                        <button class="btn-action" style="width:auto; padding:8px 15px; font-size:11px;" onclick="setMOTD()">SET ANNOUNCEMENT</button>
+                        <button class="btn-action" style="width:auto; padding:8px 15px; font-size:11px; margin-left:10px;" onclick="openServiceModal()">ADD SERVICE</button>
                     </div>
                 </div>
                 
                 <div class="admin-grid">
                     <div class="admin-section">
-                        <h4>ACCESS CONTROL & BANS</h4>
+                        <h4 style="color:var(--mint); font-size:11px;">ACCESS LOGS</h4>
                         <table class="log-table"><tbody id="access-body"></tbody></table>
                     </div>
                     <div class="admin-section">
-                        <h4>PURCHASE LEDGER</h4>
+                        <h4 style="color:var(--mint); font-size:11px;">PURCHASE HISTORY</h4>
                         <table class="log-table"><tbody id="ledger-body"></tbody></table>
                     </div>
                 </div>
             </div>
 
             <section id="tab-home">
-                <h1 style="font-weight:200;">Identity: <span id="user-display" style="color:var(--mint)">...</span></h1>
-                <div style="background:var(--glass); padding:30px; border-radius:10px; border-left:4px solid var(--mint);">
-                    <h3 style="margin-top:0;">Terminal Status</h3>
-                    <p style="color:#888;">All protocols online. Service registry is active. Your IP and session metadata are being recorded for forensic audit.</p>
+                <h1>Welcome, <span id="user-display" style="color:var(--mint)">...</span></h1>
+                <div style="background:var(--glass); padding:35px; border-radius:15px; border-left:5px solid var(--mint);">
+                    <h3 style="margin-top:0;">System Integrity: Validated</h3>
+                    <p style="color:#aaa;">You have successfully bypassed the encryption layer. Navigate to the <b>Payments</b> tab to view available service licenses.</p>
                 </div>
             </section>
 
             <section id="tab-payments" class="hidden">
-                <h1>Service Registry</h1>
+                <h1>Service <span style="color: var(--mint);">Licenses</span></h1>
                 <div class="price-grid" id="service-grid"></div>
             </section>
 
             <section id="tab-contact" class="hidden">
-                <h1>Secure Comms</h1>
-                <p>Discord: .gg/aurora</p>
+                <h1>Secure <span style="color: var(--mint);">Contact</span></h1>
+                <div style="background:var(--glass); padding:35px; border-radius:15px;">
+                    <p><b>Official Discord:</b> .gg/aurora</p>
+                    <p style="color:#666;">Response time: < 24 Hours</p>
+                </div>
             </section>
         </div>
     </div>
@@ -122,8 +129,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- CONFIG ---
-        const OWNER_NAME = "frog360"; 
+        const OWNER_NAME = "frog360"; // RESTORED OWNER NAME
 
         const initialServices = [
             { name: "IXL (MATH)", color: "var(--mint)", prices: { Weekly: "$2.00", Monthly: "$3.50", Yearly: "$35.00" } },
@@ -155,29 +161,22 @@
 
         let loggedUser = "";
 
-        // --- AUTH LOGIC ---
         async function beginAuth() {
             loggedUser = document.getElementById('discord-user').value.trim().toLowerCase();
             if(!loggedUser) return;
-
             const ip = await fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => d.ip).catch(() => "Unknown");
             
-            // Check Blacklist
             const blackDoc = await db.collection("blacklist").doc(ip).get();
-            if(blackDoc.exists) { alert("CONNECTION REFUSED: IP BLACKLISTED"); return; }
+            if(blackDoc.exists) { alert("TERMINAL ACCESS DENIED"); return; }
 
-            // AUTO-APPROVE OWNER
-            if(loggedUser === OWNER_NAME.toLowerCase()) {
-                unlockTerminal();
-                return;
-            }
+            // frog360 Bypass
+            if(loggedUser === OWNER_NAME.toLowerCase()) { unlockTerminal(); return; }
 
             document.getElementById('login-form').classList.add('hidden');
             document.getElementById('waiting-form').classList.remove('hidden');
 
             const reqRef = db.collection("auth_requests").doc(loggedUser);
             await reqRef.set({ username: loggedUser, status: "pending", ip_address: ip, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-
             reqRef.onSnapshot(doc => { if(doc.exists && doc.data().status === "approved") unlockTerminal(); });
         }
 
@@ -186,12 +185,10 @@
             document.getElementById('main-site').classList.remove('hidden');
             document.getElementById('user-display').innerText = loggedUser;
             
-            // Global MOTD Listener
             db.collection("settings").doc("announcement").onSnapshot(doc => {
                 if(doc.exists && doc.data().text) {
-                    const banner = document.getElementById('announcement-banner');
-                    banner.innerText = doc.data().text;
-                    banner.style.display = 'block';
+                    const b = document.getElementById('announcement-banner');
+                    b.innerText = doc.data().text; b.style.display = 'block';
                 }
             });
 
@@ -202,46 +199,40 @@
             renderServices();
         }
 
-        // --- ADMIN HUB ---
         function initAdminHub() {
-            db.collection("auth_requests").orderBy("timestamp", "desc").limit(10).onSnapshot(snap => {
-                const body = document.getElementById('access-body'); body.innerHTML = "";
+            db.collection("auth_requests").orderBy("timestamp", "desc").limit(8).onSnapshot(snap => {
+                const b = document.getElementById('access-body'); b.innerHTML = "";
                 snap.forEach(doc => {
                     const d = doc.data();
-                    body.innerHTML += `<tr><td>${d.username}</td><td>${d.ip_address}</td><td>
-                        <button class="btn-mini btn-approve" onclick="updateAccess('${doc.id}','approved')">✔</button>
-                        <button class="btn-mini btn-ban" onclick="banUser('${d.ip_address}')">BAN</button>
+                    b.innerHTML += `<tr><td>${d.username}</td><td>${d.ip_address}</td><td>
+                        <span style="color:var(--mint); cursor:pointer;" onclick="updateAccess('${doc.id}','approved')">[✔]</span>
+                        <span style="color:var(--red); cursor:pointer; margin-left:10px;" onclick="banUser('${d.ip_address}')">[BAN]</span>
                     </td></tr>`;
                 });
             });
 
-            db.collection("purchases").orderBy("timestamp", "desc").limit(10).onSnapshot(snap => {
-                const body = document.getElementById('ledger-body'); body.innerHTML = "";
+            db.collection("purchases").orderBy("timestamp", "desc").limit(8).onSnapshot(snap => {
+                const b = document.getElementById('ledger-body'); b.innerHTML = "";
                 snap.forEach(doc => {
                     const d = doc.data();
-                    body.innerHTML += `<tr><td>${d.user}</td><td>${d.service}</td><td>${d.timestamp ? d.timestamp.toDate().toLocaleTimeString() : '...'}</td></tr>`;
+                    b.innerHTML += `<tr><td>${d.user}</td><td>${d.service}</td><td>${d.timestamp ? d.timestamp.toDate().toLocaleTimeString() : '...'}</td></tr>`;
                 });
             });
         }
 
         async function updateAccess(id, s) { await db.collection("auth_requests").doc(id).update({ status: s }); }
-        async function banUser(ip) { if(confirm("Permanently ban this IP?")) await db.collection("blacklist").doc(ip).set({ bannedAt: firebase.firestore.FieldValue.serverTimestamp() }); }
-        
-        async function setMOTD() {
-            const msg = prompt("New Global Announcement (Leave blank to hide):");
-            await db.collection("settings").doc("announcement").set({ text: msg });
-        }
+        async function banUser(ip) { if(confirm("Permanent Ban?")) await db.collection("blacklist").doc(ip).set({ bannedAt: firebase.firestore.FieldValue.serverTimestamp() }); }
+        async function setMOTD() { const m = prompt("Announcement:"); await db.collection("settings").doc("announcement").set({ text: m }); }
 
-        // --- CORE UI ---
         function renderServices() {
             const grid = document.getElementById('service-grid'); grid.innerHTML = "";
             initialServices.forEach(s => grid.appendChild(createCard(s)));
             db.collection("services").onSnapshot(snap => {
-                document.querySelectorAll('.dyn').forEach(e => e.remove());
+                document.querySelectorAll('.dyn-card').forEach(e => e.remove());
                 snap.forEach(doc => {
                     const d = doc.data();
                     const c = createCard({ name: d.name, color: "var(--mint)", isDyn: true, id: doc.id, desc: d.desc, link: d.link });
-                    c.classList.add('dyn'); grid.appendChild(c);
+                    c.classList.add('dyn-card'); grid.appendChild(c);
                 });
             });
         }
@@ -249,10 +240,10 @@
         function createCard(s) {
             const div = document.createElement('div'); div.className = "price-card";
             let p = "";
-            if(s.prices) { for (const [k, v] of Object.entries(s.prices)) p += `<div style="display:flex; justify-content:space-between; margin:8px 0; border-bottom:1px solid #111;"><span>${k}</span><span>${v}</span></div>`; }
-            else p = `<p style="font-size:12px; color:#666;">${s.desc}</p>`;
-            div.innerHTML = `<h3>${s.name}</h3>${p}<button class="btn-action" style="background:${s.color}; margin-top:15px;" onclick="handlePurchase('${s.link || s.name}')">PURCHASE</button>
-                ${s.isDyn && loggedUser === OWNER_NAME.toLowerCase() ? `<p onclick="delService('${s.id}')" style="color:red; cursor:pointer; font-size:10px; text-align:center; margin-top:10px;">[DELETE]</p>` : ''}`;
+            if(s.prices) { for (const [k, v] of Object.entries(s.prices)) p += `<div class="price-row"><span>${k}</span><span>${v}</span></div>`; }
+            else p = `<p style="font-size:12px; color:#777;">${s.desc}</p>`;
+            div.innerHTML = `<div class="card-inner"><div><h3 style="color:${s.color}">${s.name}</h3>${p}</div><button class="btn-action" style="background:${s.color}; margin-top:15px;" onclick="handlePurchase('${s.link || s.name}')">PURCHASE</button>
+                ${s.isDyn && loggedUser === OWNER_NAME.toLowerCase() ? `<p onclick="delService('${s.id}')" style="color:var(--red); cursor:pointer; font-size:10px; text-align:center; margin-top:10px;">[DELETE]</p>` : ''}</div>`;
             return div;
         }
 
@@ -264,14 +255,14 @@
         async function handlePurchase(n) {
             if(n.startsWith('http')) { window.open(n, '_blank'); return; }
             await db.collection("purchases").add({ user: loggedUser, service: n, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            alert("Request logged in command ledger.");
+            alert("Order Logged.");
         }
 
         async function openServiceModal() {
-            const n = prompt("Name:"); const d = prompt("Desc:"); const l = prompt("Link:");
+            const n = prompt("Name:"); const d = prompt("Desc/Price:"); const l = prompt("Link:");
             if(n && d) await db.collection("services").add({ name: n, desc: d, link: l });
         }
-        async function delService(id) { if(confirm("Delete service?")) await db.collection("services").doc(id).delete(); }
+        async function delService(id) { if(confirm("Delete?")) await db.collection("services").doc(id).delete(); }
     </script>
 </body>
 </html>
