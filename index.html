@@ -5,45 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌌Aurora🌌 | Secure Console</title>
     <style>
-        :root { --mint: #4ecca3; --blurple: #7289da; --bg: #050505; }
+        :root { --mint: #4ecca3; --blurple: #7289da; --bg: #050505; --red: #ff4d4d; }
         body { margin: 0; padding: 0; color: #fff; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
         
-        .aurora-bg { position: fixed; inset: 0; background: linear-gradient(217deg, rgba(78, 204, 163, .1), rgba(0,0,0,0) 70.71%), linear-gradient(127deg, rgba(114, 137, 218, .1), rgba(0,0,0,0) 70.71%); filter: blur(80px); z-index: -1; }
+        .aurora-bg { position: fixed; inset: 0; background: linear-gradient(217deg, rgba(78, 204, 163, .08), rgba(0,0,0,0) 70.71%), linear-gradient(127deg, rgba(114, 137, 218, .08), rgba(0,0,0,0) 70.71%); filter: blur(80px); z-index: -1; }
 
         /* Auth Screen */
         .auth-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-        .auth-box { background: rgba(255,255,255,0.03); padding: 50px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; width: 350px; backdrop-filter: blur(20px); }
+        .auth-box { background: rgba(255,255,255,0.02); padding: 50px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 350px; backdrop-filter: blur(20px); }
         
         /* Navigation */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 10%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        nav .links a { color: #888; text-decoration: none; margin-left: 30px; transition: 0.3s; cursor: pointer; font-weight: bold; font-size: 14px; }
-        nav .links a:hover, nav .links a.active { color: var(--mint); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 8%; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-links { display: flex; align-items: center; gap: 25px; }
+        .nav-links a { color: #666; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover, .nav-links a.active { color: var(--mint); }
+        .delete-tab-icon { color: var(--red); font-size: 10px; margin-left: 5px; opacity: 0.5; }
+        .delete-tab-icon:hover { opacity: 1; }
 
-        .container { padding: 40px 10%; }
+        /* Logout Confirmation (The Red Block) */
+        #logout-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 5000; backdrop-filter: blur(10px); }
+        .logout-box { background: var(--red); width: 380px; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 0 50px rgba(255, 77, 77, 0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .logout-box h2 { font-size: 28px; margin: 0 0 10px 0; font-weight: 900; }
+        .logout-btns { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-confirm { background: white; color: var(--red); flex: 1; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-cancel { background: transparent; color: white; border: 2px solid white; flex: 1; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+
+        /* CMS / Create Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 4000; }
+        .modal { background: #0f0f0f; padding: 35px; border-radius: 20px; border: 1px solid #222; width: 400px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #151515; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; outline: none; }
+
+        /* Content Styles */
+        .container { padding: 40px 8%; max-width: 1400px; margin: auto; }
+        .text-bubble { background: rgba(255,255,255,0.03); padding: 30px; border-radius: 20px; border-left: 4px solid var(--mint); margin-bottom: 25px; animation: slideIn 0.5s ease; }
         .hidden { display: none; }
 
-        /* Admin Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal { background: #111; padding: 30px; border-radius: 15px; border: 1px solid var(--mint); width: 400px; text-align: center; }
-        .admin-input { width: 90%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 5px; }
+        /* Price Cards (From Previous Version) */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .price-card { background: #0a0a0a; border-radius: 22px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; transition: 0.3s; }
+        .price-card:hover { transform: translateY(-5px); border-color: var(--mint); }
+        .card-inner { padding: 25px; position: relative; z-index: 2; }
+        .btn { background: var(--mint); color: #000; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 15px; }
 
-        /* Price Cards */
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
-        .price-card { position: relative; background: #0a0a0a; padding: 2px; border-radius: 22px; overflow: hidden; display: flex; transition: 0.4s; min-height: 320px; }
-        .price-card:hover { transform: scale(1.03); box-shadow: 0 0 30px rgba(78, 204, 163, 0.2); }
-        .price-card::before { content: ''; position: absolute; width: 200%; height: 200%; background-image: conic-gradient(transparent, transparent, var(--mint), transparent, transparent, transparent, var(--blurple), transparent); animation: rotate 4s linear infinite; top: -50%; left: -50%; }
-        .card-inner { background: #0a0a0a; padding: 25px; border-radius: 20px; width: 100%; position: relative; z-index: 5; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        h3 { margin-top: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 1.4em; }
-        .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .price-row label { color: #888; font-size: 0.9em; }
-        
-        .btn { background: var(--mint); color: #000; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; transition: 0.3s; }
-        .btn:hover { opacity: 0.8; }
-        
-        input { width: 100%; padding: 12px; margin: 20px 0; background: #111; border: 1px solid #333; color: white; border-radius: 10px; text-align: center; box-sizing: border-box; outline: none; }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -52,59 +57,57 @@
 
     <div id="auth-screen" class="auth-overlay">
         <div class="auth-box" id="login-form">
-            <h1 style="letter-spacing: 8px;">🌌AURORA🌌</h1>
+            <h1 style="letter-spacing: 8px; margin-bottom: 30px;">🌌AURORA🌌</h1>
             <input type="text" id="discord-user" placeholder="Discord Username">
-            <button class="btn" onclick="requestAccess()">INITIALIZE LINK</button>
+            <button class="btn" onclick="initializeSecureLink()">INITIALIZE LINK</button>
         </div>
         <div class="auth-box hidden" id="waiting-form">
-            <h2 style="color: var(--mint);">WAITING...</h2>
-            <p>Check your Discord DMs for the ✅</p>
+            <h2 style="color: var(--mint);">ANALYZING...</h2>
+            <p style="font-size: 14px; color: #888;">Complete the 2-step verification in DMs.</p>
         </div>
     </div>
 
-    <div id="admin-modal" class="modal-overlay">
+    <div id="logout-modal">
+        <div class="logout-box">
+            <h2>CONFIRM?</h2>
+            <p>Ending this session will clear all active security keys.</p>
+            <div class="logout-btns">
+                <button class="btn-confirm" onclick="location.reload()">LOGOUT</button>
+                <button class="btn-cancel" onclick="toggleLogout(false)">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-modal" class="modal-overlay">
         <div class="modal">
-            <h3>Add New Service</h3>
-            <input type="text" id="new-name" class="admin-input" placeholder="Service Name">
-            <input type="text" id="new-desc" class="admin-input" placeholder="Description/Price">
-            <input type="text" id="new-link" class="admin-input" placeholder="Payment Link">
-            <button class="btn" onclick="saveNewService()">Deploy UI</button>
-            <button class="btn" onclick="closeModal()" style="background: #333; color: white;">Cancel</button>
+            <h3 style="color: var(--mint);">Create New Tab</h3>
+            <input type="text" id="tab-name" placeholder="Tab Name (e.g. Home)">
+            <select id="tab-type">
+                <option value="text">Text Bubble Style</option>
+                <option value="payment">Payment Grid Style</option>
+            </select>
+            <button class="btn" onclick="saveNewTab()">DEPOY TAB</button>
+            <button class="btn" onclick="closeModals()" style="background: #222; color: #888;">CANCEL</button>
         </div>
     </div>
 
     <div id="main-site" class="hidden">
         <nav>
-            <h2 style="color: var(--mint); letter-spacing: 4px; margin:0;">🌌AURORA🌌</h2>
-            <div class="links">
-                <a onclick="showTab('home')" id="nav-home" class="active">HOME</a>
-                <a onclick="showTab('payments')" id="nav-payments">PAYMENTS</a>
-                <a onclick="showTab('contact')" id="nav-contact">CONTACT</a>
-                <a onclick="location.reload()" style="color: #ff4d4d;">LOGOUT</a>
+            <h2 style="color: var(--mint); letter-spacing: 4px;">🌌AURORA🌌</h2>
+            <div class="nav-links">
+                <div id="dynamic-nav" style="display:flex; gap:20px;"></div>
+                <a onclick="toggleLogout(true)" style="color: var(--red); margin-left: 20px;">[LOGOUT]</a>
             </div>
         </nav>
 
         <div class="container">
-            <section id="tab-home">
-                <h1>Welcome, <span id="user-display" style="color: var(--mint);">Operator</span></h1>
-                <p>All security protocols are active. Select a service to begin.</p>
-            </section>
+            <div id="admin-bar" class="hidden" style="margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;">
+                <span style="color: var(--mint); font-size: 12px; font-weight: 800;">ADMIN PANEL:</span>
+                <button onclick="openTabModal()" style="background:none; border: 1px solid var(--mint); color: var(--mint); cursor:pointer; padding: 5px 15px; border-radius: 5px; margin-left: 10px;">+ Add Tab</button>
+            </div>
 
-            <section id="tab-payments" class="hidden">
-                <h1>Service <span style="color: var(--mint);">Licenses</span></h1>
-                <div class="price-grid" id="service-grid">
+            <div id="tab-content">
                 </div>
-            </section>
-
-            <section id="tab-contact" class="hidden">
-                <h1>Contact Support</h1>
-                <div class="price-card" style="max-width: 500px; min-height: auto;">
-                    <div class="card-inner">
-                        <p><b>Support Email:</b> we currently dont have a email for help join the discord</p>
-                        <p><b>Discord:</b> https://discord.gg/m33fkquE</p>
-                    </div>
-                </div>
-            </section>
         </div>
     </div>
 
@@ -112,26 +115,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- 🟢 NAMES AND PRICES AREA 🟢 ---
-        // Change these to your liking! I added 6 more for a total of 14.
-        const initialServices = [
-            { name: "IXL (MATH)", color: "var(--mint)", prices: { Weekly: "$2.00", Monthly: "$3.50", Yearly: "$35.00" } },
-            { name: "EP (MATH)", color: "var(--blurple)", prices: { Weekly: "$1.50", Monthly: "$4.50", Yearly: "$44.00" } },
-            { name: "KAHOOT (MATH)", color: "var(--mint)", prices: { Weekly: "$3.50", Monthly: "$6.50", Yearly: "$65.00" } },
-            { name: "BLOOKET (MATH)", color: "var(--blurple)", prices: { Weekly: "$2.00", Monthly: "$5.00", Yearly: "$50.00" } },
-            { name: "ANYTHING AI", color: "var(--mint)", prices: { Weekly: "$2.00", Monthly: "$5.00", Yearly: "$50.00" } },
-            { name: "AQUA AURORA (DONT BUY) (dont buy)", color: "var(--blurple)", prices: { Weekly: "$1.00", Monthly: "$3.00", Yearly: "$30.00" } },
-            { name: "DONATION", color: "var(--mint)", prices: { Weekly: "$1.50", Monthly: "$4.00", Yearly: "$40.00" } },
-            { name: "SECRET AURORA SYSTEM", color: "var(--blurple)", prices: { Weekly: "$2.50", Monthly: "$6.00", Yearly: "$60.00" } },
-            // --- NEW 6 SERVICES ADDED BELOW ---
-            { name: "IXL (ENGLISH)", color: "var(--mint)", prices: { Weekly: "$1.80", Monthly: "$2.90", Yearly: "$30.00" } },
-            { name: "EP (ENGLISH)", color: "var(--blurple)", prices: { Weekly: "$1.00", Monthly: "$4.00", Yearly: "$44.00" } },
-            { name: "KAHOOT (ENGLISH)", color: "var(--mint)", prices: { Weekly: "$4.00", Monthly: "$8.00", Yearly: "$80.00" } },
-            { name: "BLOOKET (ENGLISH)", color: "var(--blurple)", prices: { Weekly: "$3.00", Monthly: "$5.10", Yearly: "$59.99" } },
-            { name: "VIDEO PLAYER (ANY VIDEOS YOU WANT)", color: "var(--mint)", prices: { Weekly: "$?.??", Monthly: "$?.??", Yearly: "$?.??" } },
-            { name: "CUSTOM REQUEST", color: "var(--blurple)", prices: { Weekly: "$?.??", Monthly: "$?.??", Yearly: "$?.??" } }
-        ];
-
+        // --- 1. FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyCmnO3VTJ3KYg5x5dWOMLexT1_a9VPpP1Q",
             authDomain: "foldrex-aurora.firebaseapp.com",
@@ -143,130 +127,124 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const OWNER_ID = "frog360"; 
+        // --- 2. SECURITY CONFIG ---
+        const OWNER_ID = "YOUR_DISCORD_NAME"; // SET YOUR NAME HERE
         let currentUser = "";
+        let currentActiveTab = "";
 
-        // --- AUTH ---
-        async function requestAccess() {
+        // --- 3. FORENSIC LOGIN ---
+        async function initializeSecureLink() {
             currentUser = document.getElementById('discord-user').value.trim();
-            if(!currentUser) return alert("Enter name!");
+            if(!currentUser) return;
+
             document.getElementById('login-form').classList.add('hidden');
             document.getElementById('waiting-form').classList.remove('hidden');
 
-            const docRef = db.collection("auth_requests").doc(currentUser);
-            await docRef.set({ username: currentUser, status: "pending" });
+            // Capture Forensics
+            let ip = "Unknown";
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                ip = data.ip;
+            } catch(e) {}
 
-            docRef.onSnapshot((doc) => {
-                if (doc.exists && doc.data().status === "approved") { unlockSite(); }
+            const authRef = db.collection("auth_requests").doc(currentUser);
+            await authRef.set({
+                username: currentUser,
+                status: "pending",
+                ip_address: ip,
+                entry_method: "Aurora Website v3",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            authRef.onSnapshot((doc) => {
+                if (doc.exists && doc.data().status === "approved") { 
+                    unlockSite(); 
+                }
             });
         }
 
         function unlockSite() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-site').classList.remove('hidden');
-            document.getElementById('user-display').innerText = currentUser;
-            renderAllServices();
+            if(currentUser === OWNER_ID) document.getElementById('admin-bar').classList.remove('hidden');
+            syncTabs();
         }
 
-        // --- RENDER SERVICES ---
-        function renderAllServices() {
-            const grid = document.getElementById('service-grid');
-            grid.innerHTML = ""; 
-
-            initialServices.forEach(s => {
-                let priceLines = "";
-                for (const [time, price] of Object.entries(s.prices)) {
-                    priceLines += `<div class="price-row"><label>${time}</label><span>${price}</span></div>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = "price-card";
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div>
-                            <h3 style="color: ${s.color}">${s.name}</h3>
-                            ${priceLines}
-                        </div>
-                        <button class="btn" onclick="startPurchase('${s.name}')" style="background: ${s.color}">PURCHASE</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-
-            loadDynamicServices();
-        }
-
-        async function loadDynamicServices() {
-            db.collection("services").onSnapshot((snapshot) => {
-                document.querySelectorAll('.dynamic-card, .add-card-btn').forEach(el => el.remove());
-                const grid = document.getElementById('service-grid');
-
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const div = document.createElement('div');
-                    div.className = "price-card dynamic-card";
-                    div.innerHTML = `
-                        <div class="card-inner">
-                            <div>
-                                <h3>${data.name}</h3>
-                                <p style="color: #ccc; margin-top: 20px;">${data.desc}</p>
-                            </div>
-                            <button class="btn" onclick="startPurchase('${data.link}')">PURCHASE</button>
-                            ${currentUser === OWNER_ID ? `<button onclick="deleteService('${doc.id}')" style="background:none; border:none; color:#ff4d4d; cursor:pointer; margin-top:10px; font-size:12px;">[Delete]</button>` : ''}
-                        </div>
-                    `;
-                    grid.appendChild(div);
+        // --- 4. CMS: TABS & CONTENT ---
+        function syncTabs() {
+            db.collection("tabs").orderBy("createdAt", "asc").onSnapshot(snap => {
+                const nav = document.getElementById('dynamic-nav');
+                nav.innerHTML = "";
+                snap.forEach(doc => {
+                    const tab = doc.data();
+                    const a = document.createElement('a');
+                    a.innerText = tab.name;
+                    a.onclick = () => renderTab(doc.id, tab);
+                    if(currentUser === OWNER_ID) {
+                        const del = document.createElement('span');
+                        del.innerHTML = " ✖";
+                        del.className = "delete-tab-icon";
+                        del.onclick = (e) => { e.stopPropagation(); deleteTab(doc.id); };
+                        a.appendChild(del);
+                    }
+                    nav.appendChild(a);
                 });
-
-                if(currentUser === OWNER_ID) {
-                    const addBtn = document.createElement('div');
-                    addBtn.className = "price-card add-card-btn";
-                    addBtn.style.cursor = "pointer";
-                    addBtn.innerHTML = `<div class="card-inner" style="justify-content:center; align-items:center; border:2px dashed #444;">
-                        <h1 style="color: var(--mint); margin:0;">+</h1><p style="color: #666;">Add Service</p>
-                    </div>`;
-                    addBtn.onclick = openModal;
-                    grid.appendChild(addBtn);
-                }
+                // Default to first tab
+                if(snap.docs[0] && !currentActiveTab) renderTab(snap.docs[0].id, snap.docs[0].data());
             });
         }
 
-        async function startPurchase(serviceName) {
-            if(serviceName.startsWith("http")) { window.open(serviceName, '_blank'); return; }
-            try {
-                await db.collection("purchases").add({
-                    username: currentUser,
-                    service: serviceName,
-                    status: "waiting_for_payment",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        async function renderTab(id, data) {
+            currentActiveTab = id;
+            const container = document.getElementById('tab-content');
+            container.innerHTML = `<h1 style="text-transform:uppercase; letter-spacing:4px;">${data.name}</h1>`;
+
+            if(data.type === 'text') {
+                db.collection("tabs").doc(id).collection("sections").onSnapshot(snap => {
+                    container.innerHTML = `<h1>${data.name}</h1>`;
+                    if(currentUser === OWNER_ID) container.innerHTML += `<button onclick="addTextSection('${id}')" style="margin-bottom:20px;">+ Add Bubble</button>`;
+                    snap.forEach(doc => {
+                        const sec = doc.data();
+                        container.innerHTML += `
+                            <div class="text-bubble">
+                                <h3>${sec.title}</h3>
+                                <p>${sec.content}</p>
+                                ${currentUser === OWNER_ID ? `<button onclick="deleteSection('${id}','${doc.id}')" style="color:red; background:none; border:none; cursor:pointer;">[Delete Bubble]</button>` : ''}
+                            </div>`;
+                    });
                 });
-                alert("Purchase Request Sent! Check Discord.");
-            } catch (e) { console.error(e); }
+            } else {
+                renderPaymentGrid(id);
+            }
         }
 
-        function openModal() { document.getElementById('admin-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('admin-modal').style.display = 'none'; }
-        
-        async function saveNewService() {
-            const name = document.getElementById('new-name').value;
-            const desc = document.getElementById('new-desc').value;
-            const link = document.getElementById('new-link').value;
-            if(!name || !link) return alert("Fill required fields!");
-            await db.collection("services").add({ name, desc, link });
-            closeModal();
+        // --- 5. LOGOUT & MODALS ---
+        function toggleLogout(show) { document.getElementById('logout-modal').style.display = show ? 'flex' : 'none'; }
+        function openTabModal() { document.getElementById('tab-modal').style.display = 'flex'; }
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+
+        async function saveNewTab() {
+            const name = document.getElementById('tab-name').value;
+            const type = document.getElementById('tab-type').value;
+            if(!name) return;
+            await db.collection("tabs").add({ name, type, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            closeModals();
         }
 
-        async function deleteService(id) {
-            if(confirm("Delete this?")) { await db.collection("services").doc(id).delete(); }
+        async function deleteTab(id) {
+            if(confirm("Delete this entire tab?")) await db.collection("tabs").doc(id).delete();
         }
 
-        function showTab(id) {
-            ['home', 'payments', 'contact'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
-                document.getElementById('nav-' + t).classList.remove('active');
-            });
-            document.getElementById('tab-' + id).classList.remove('hidden');
-            document.getElementById('nav-' + id).classList.add('active');
+        // --- 6. ADDING CONTENT TO TABS ---
+        async function addTextSection(tabId) {
+            const title = prompt("Bubble Title:");
+            const content = prompt("Bubble Text Content:");
+            if(title) await db.collection("tabs").doc(tabId).collection("sections").add({ title, content });
+        }
+
+        async function deleteSection(tabId, secId) {
+            await db.collection("tabs").doc(tabId).collection("sections").doc(secId).delete();
         }
     </script>
 </body>
