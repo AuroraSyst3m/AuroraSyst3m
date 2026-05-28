@@ -1,4 +1,4 @@
-## Hi i am aurora i am a person working on websites and python code
+## hi i like to make websites, code, and electronics 
 
 <!--
 **AuroraSyst3m/AuroraSyst3m** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
