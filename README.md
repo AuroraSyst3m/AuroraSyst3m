@@ -1,4 +1,5 @@
 ## hi i like to make websites, code, and electronics 
+aurora is still in alpha hoping that itll be done by 20/12/26
 
 <!--
 **AuroraSyst3m/AuroraSyst3m** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
